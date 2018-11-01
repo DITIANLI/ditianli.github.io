@@ -4,8 +4,5 @@ title: "p8105_hw4_dl3157"
 
 This is homework4 for p8105
 
-And I can put my CV here.
+And I can put my CV here. [Take a look!](./data/Li,Ditian-CV-PHD-2019FALL.pdf)
 
-```{r, cache = TRUE}
-data <- longComputation()
-```
