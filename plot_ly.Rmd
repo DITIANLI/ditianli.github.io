@@ -1,0 +1,68 @@
+---
+title: "Plot_ly"
+author: "Ditian Li"
+date: "2018/11/1"
+output: html_document
+---
+
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+library(viridis)
+library(p8105.datasets)
+library(plotly)
+devtools::install_github("p8105/p8105.datasets")
+library(p8105.datasets)
+brfss_sm = brfss_smart2010 %>%
+janitor::clean_names() %>%
+filter(topic == 'Overall Health') %>%
+ mutate(response = as.factor(response),
+         response = factor(response, levels = c("Excellent", "Very good", "Good", "Fair", "Poor"))) %>% 
+  select(year, state = locationabbr, county = locationdesc, response, everything()) 
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+brfss_sm1 <- brfss_sm %>% 
+  group_by(year, state) %>% 
+  summarize(n = n_distinct(county)) 
+
+brfss_sm1 %>% 
+  plot_ly(y = ~n, type = "box",
+          alpha = 0.5, 
+          color = ~state,
+          colors = "Set2")
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+brfss_sm1 %>% filter(year == 2002) %>%   
+   mutate(state = fct_reorder(state, n)) %>% 
+  plot_ly(x = ~state, y = ~n, color = ~state, type = "bar")
+```
+
+### Chart C
+
+```{r}
+brfss_sm1 %>% 
+  plot_ly(x = ~year, y =  ~state, z = ~n,
+          color = ~year)
+```

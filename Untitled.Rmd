@@ -1,0 +1,65 @@
+---
+title: "Plotly"
+author: "Ditian Li"
+date: "2018/11/1"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+library(viridis)
+library(p8105.datasets)
+library(plotly)
+
+```
+
+```{r}
+devtools::install_github("p8105/p8105.datasets")
+library(p8105.datasets)
+brfss_sm = brfss_smart2010 %>%
+janitor::clean_names() %>%
+filter(topic == 'Overall Health') %>%
+ mutate(response = as.factor(response),
+         response = factor(response, levels = c("Excellent", "Very good", "Good", "Fair", "Poor"))) %>% 
+  select(year, state = locationabbr, county = locationdesc, response, everything()) 
+
+```
+
+```{r plot1}
+brfss_sm1 <- brfss_sm %>% 
+  group_by(year, state) %>% 
+  summarize(n = n_distinct(county)) 
+
+brfss_sm1 %>% 
+  plot_ly(y = ~n, type = "box",
+          alpha = 0.5, 
+          color = ~state,
+          colors = "Set2")
+```
+
+
+```{r plot2}
+brfss_sm1 %>% filter(year == 2002) %>%   
+   mutate(state = fct_reorder(state, n)) %>% 
+  plot_ly(x = ~state, y = ~n, color = ~state, type = "bar")
+```
+
+```{r plot3}
+brfss_sm2 <- brfss_sm1 %>% 
+  plot_ly(x = ~year, y = ~n, type = "scatter", mode = "markers",
+          alpha = 0.5, 
+          color = ~state)
+```
+
+```{r}
+brfss_sm1 %>% 
+  plot_ly(x = ~year, y =  ~state, z = ~n,
+          color = ~year)
+```
+
+
+```
+
+
