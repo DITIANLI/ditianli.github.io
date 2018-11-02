@@ -3,5 +3,5 @@ title: "Website for p8105 Homework 4"
 ---
 
 This is homework4 for p8105.
-You could find my CV and the answer for question 2 in About page.
+You could find my CV and the answer for question 2 on About page.
 

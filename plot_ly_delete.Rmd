@@ -1,0 +1,67 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(flexdashboard)
+library(dplyr)
+library(tidyverse)
+library(viridis)
+library(p8105.datasets)
+library(plotly)
+devtools::install_github("p8105/p8105.datasets")
+library(p8105.datasets)
+```
+
+```{r plot-1}
+devtools::install_github("p8105/p8105.datasets")
+library(p8105.datasets)
+instacart
+sum(is.na(instacart))
+nrow(distinct(instacart, order_id))
+nrow(distinct(instacart, user_id))
+nrow(distinct(instacart, product_id))
+
+instacart %>% 
+  group_by(aisle) %>% 
+  summarize(n_item = n()) %>% 
+  arrange(desc(n_item)) %>% 
+   mutate(aisle = fct_reorder(aisle, n_item)) %>% 
+  plot_ly(x = ~aisle, y = ~n_item, color = ~aisle, type = "bar")
+
+```
+
+```{r plot-2}
+  instacart1 <- instacart %>% 
+  group_by(aisle,order_dow) %>% 
+  summarize(n_item = n()) 
+  
+  instacart1%>% 
+  plot_ly(x = ~aisle, y =  ~order_dow, z = ~n_item,
+          color = ~order_dow)
+
+```
+
+```{r}
+fresh_vegetables <- instacart %>% 
+  group_by(aisle,order_hour_of_day) %>% 
+  filter(aisle == "fresh vegetables") %>% 
+  summarize(n_item = n()) %>% 
+  mutate(n_item1 = n_item)
+
+fresh_fruits <- instacart %>% 
+  group_by(aisle,order_hour_of_day) %>% 
+  filter(aisle == "fresh fruits") %>% 
+  summarize(n_item = n()) %>% 
+ mutate(n_item2 = n_item)
+
+data<- data.frame(fresh_vegetables,fresh_fruits)
+
+
+plot_ly(data, x = ~order_hour_of_day, y = ~n_item1, name = 'fresh vegetables', type = 'scatter', mode = 'lines') %>%
+  add_trace(y = ~n_item2, name = 'fresh fruits', mode = 'lines') 
+
+```
+

@@ -7,9 +7,9 @@ output:
     orientation: columns
     vertical_layout: fill
 ---
-Chart A is a 3D plot which shows the grand trend of station numbers of different states in different years from 2002 to 2010, and the trends stay roughly same.
-Chart B is a bar plot of station amounts across states in year 2002.
-Chart C is a box plot of distribution for total station amounts across states.
+Chart A, the trend of orders is roughly same across week(fresh fruits, fresh vegetables, packaged fruits and vegetables changed across week ).
+Chart B, the top2 popular aisles are fresh vegetables and fresh fruits.
+Chart C, compare the trend of orders of fresh vegatables and fresh fruits, they are at similar trend, from 12-14 o'clock there are less fresh fruits orders than fresh vegetables.
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
@@ -20,46 +20,57 @@ library(p8105.datasets)
 library(plotly)
 devtools::install_github("p8105/p8105.datasets")
 library(p8105.datasets)
-brfss_sm = brfss_smart2010 %>%
-janitor::clean_names() %>%
-filter(topic == 'Overall Health') %>%
- mutate(response = as.factor(response),
-         response = factor(response, levels = c("Excellent", "Very good", "Good", "Fair", "Poor"))) %>% 
-  select(year, state = locationabbr, county = locationdesc, response, everything()) 
 ```
 
-Column {data-width=650}
+Column {data-width=500}
 -----------------------------------------------------------------------
 
-### Chart A
+### Chart A: 3D plot to show the trend of orders of different aisles across week.
 
 ```{r}
-brfss_sm1 <- brfss_sm %>% 
-  group_by(year, state) %>% 
-  summarize(n = n_distinct(county)) 
 
-brfss_sm1 %>% 
-  plot_ly(x = ~year, y =  ~state, z = ~n,
-          color = ~year)
+ instacart1 <- instacart %>% 
+  group_by(aisle,order_dow) %>% 
+  summarize(n_item = n()) 
+  
+  instacart1%>% 
+  plot_ly(x = ~order_dow, y =  ~aisle, z = ~n_item,
+          color = ~order_dow)
+
 ```
 
-Column {data-width=350}
+Column {data-width=500}
 -----------------------------------------------------------------------
 
-### Chart B
+### Chart B: Bar chart to show order amounts for different aisles.
 
 ```{r}
-brfss_sm1 %>% filter(year == 2002) %>%   
-   mutate(state = fct_reorder(state, n)) %>% 
-  plot_ly(x = ~state, y = ~n, color = ~state, type = "bar")
+instacart %>% 
+  group_by(aisle) %>% 
+  summarize(n_item = n()) %>% 
+  arrange(desc(n_item)) %>% 
+   mutate(aisle = fct_reorder(aisle, n_item)) %>% 
+  plot_ly(x = ~aisle, y = ~n_item, color = ~aisle, type = "bar")
 ```
 
-### Chart C
+### Chart C: Line plot to compare trends across day for the two most popular aisles.
 
 ```{r}
-brfss_sm1 %>% 
-  plot_ly(y = ~n, type = "box",
-          alpha = 0.5, 
-          color = ~state,
-          colors = "Set2")
+fresh_vegetables <- instacart %>% 
+  group_by(aisle,order_hour_of_day) %>% 
+  filter(aisle == "fresh vegetables") %>% 
+  summarize(n_item = n()) %>% 
+  mutate(n_item1 = n_item)
+
+fresh_fruits <- instacart %>% 
+  group_by(aisle,order_hour_of_day) %>% 
+  filter(aisle == "fresh fruits") %>% 
+  summarize(n_item = n()) %>% 
+ mutate(n_item2 = n_item)
+
+data<- data.frame(fresh_vegetables,fresh_fruits)
+
+
+plot_ly(data, x = ~order_hour_of_day, y = ~n_item1, name = 'fresh vegetables', type = 'scatter', mode = 'lines') %>%
+  add_trace(y = ~n_item2, name = 'fresh fruits', mode = 'lines') 
 ```
