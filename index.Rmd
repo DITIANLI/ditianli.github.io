@@ -1,8 +1,7 @@
 ---
-title: "p8105_hw4_dl3157"
+title: "Websit for p8105 Homework 4"
 ---
 
-This is homework4 for p8105
+This is homework4 for p8105.
 
-And I can put my CV here. [Take a look!](./data/Li,Ditian-CV-PHD-2019FALL.pdf)
 

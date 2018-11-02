@@ -2,20 +2,17 @@
 title: "Plot_ly"
 author: "Ditian Li"
 date: "2018/11/1"
-output: html_document
----
-
----
-title: "Untitled"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
 ---
+Chart A is a 3D plot which shows the grand trend of station numbers of different states in different years from 2002 to 2010, and the trends stay roughly same.
+Chart B is a bar plot of station amounts across states in year 2002.
+Chart C is a box plot of distribution for total station amounts across states.
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
-knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(tidyverse)
 library(viridis)
@@ -42,10 +39,8 @@ brfss_sm1 <- brfss_sm %>%
   summarize(n = n_distinct(county)) 
 
 brfss_sm1 %>% 
-  plot_ly(y = ~n, type = "box",
-          alpha = 0.5, 
-          color = ~state,
-          colors = "Set2")
+  plot_ly(x = ~year, y =  ~state, z = ~n,
+          color = ~year)
 ```
 
 Column {data-width=350}
@@ -63,6 +58,8 @@ brfss_sm1 %>% filter(year == 2002) %>%
 
 ```{r}
 brfss_sm1 %>% 
-  plot_ly(x = ~year, y =  ~state, z = ~n,
-          color = ~year)
+  plot_ly(y = ~n, type = "box",
+          alpha = 0.5, 
+          color = ~state,
+          colors = "Set2")
 ```

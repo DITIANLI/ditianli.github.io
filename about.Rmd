@@ -5,3 +5,5 @@ title: "About"
 ### About this site
 
 This is a personal website created for P8105 homework 4.
+And I can put my CV here. [Take a look!](./data/Li,Ditian-CV-PHD-2019FALL.pdf)
+And [here are the plots](plot_ly.html) for plotly question.
